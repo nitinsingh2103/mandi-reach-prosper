@@ -10,33 +10,63 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MarketPricesRouteImport } from './routes/market-prices'
+import { Route as PriceTrendsRouteImport } from './routes/price-trends'
+import { Route as MarketIdRouteImport } from './routes/market.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MarketPricesRoute = MarketPricesRouteImport.update({
+  id: '/market-prices',
+  path: '/market-prices',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PriceTrendsRoute = PriceTrendsRouteImport.update({
+  id: '/price-trends',
+  path: '/price-trends',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketIdRoute = MarketIdRouteImport.update({
+  id: '/market/$id',
+  path: '/market/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/market-prices': typeof MarketPricesRoute
+  '/price-trends': typeof PriceTrendsRoute
+  '/market/$id': typeof MarketIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/market-prices': typeof MarketPricesRoute
+  '/price-trends': typeof PriceTrendsRoute
+  '/market/$id': typeof MarketIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/market-prices': typeof MarketPricesRoute
+  '/price-trends': typeof PriceTrendsRoute
+  '/market/$id': typeof MarketIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/market-prices' | '/price-trends' | '/market/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/market-prices' | '/price-trends' | '/market/$id'
+  id: '__root__' | '/' | '/market-prices' | '/price-trends' | '/market/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  MarketPricesRoute: typeof MarketPricesRoute
+  PriceTrendsRoute: typeof PriceTrendsRoute
+  MarketIdRoute: typeof MarketIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +78,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/market-prices': {
+      id: '/market-prices'
+      path: '/market-prices'
+      fullPath: '/market-prices'
+      preLoaderRoute: typeof MarketPricesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/price-trends': {
+      id: '/price-trends'
+      path: '/price-trends'
+      fullPath: '/price-trends'
+      preLoaderRoute: typeof PriceTrendsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/market/$id': {
+      id: '/market/$id'
+      path: '/market/$id'
+      fullPath: '/market/$id'
+      preLoaderRoute: typeof MarketIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  MarketPricesRoute: MarketPricesRoute,
+  PriceTrendsRoute: PriceTrendsRoute,
+  MarketIdRoute: MarketIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
