@@ -152,16 +152,19 @@ export function getCrop(id: string) {
   return CROPS.find((c) => c.id === id);
 }
 
-export function getPrice(market: Market, cropId: string) {
-  return market.prices.find((p) => p.cropId === cropId) ?? market.prices[0];
+export function getPrice(market: Market, cropId: string): MarketPrice {
+  return (
+    market.prices.find((p) => p.cropId === cropId) ??
+    ({ cropId, min: 0, max: 0, modal: 0, changePct: 0 } as MarketPrice)
+  );
 }
 
 export type PricePoint = { date: string; price: number };
 
 /** Historical series generator — replace with a real time-series endpoint later. */
 export function getPriceHistory(cropId: string, marketId: string, days: number): PricePoint[] {
-  const crop = getCrop(cropId) ?? CROPS[0];
-  const market = getMarket(marketId) ?? MARKETS[0];
+  const crop = getCrop(cropId) ?? CROPS[0]!;
+  const market = getMarket(marketId) ?? MARKETS[0]!;
   const base = getPrice(market, cropId).modal;
   const rand = seeded(`${cropId}-${marketId}-${days}`);
   const points = days <= 7 ? 7 : days <= 30 ? 30 : 24;
@@ -177,7 +180,8 @@ export function getPriceHistory(cropId: string, marketId: string, days: number):
       price: Math.max(Math.round(value / 5) * 5, Math.round(crop.avgPrice * 0.5)),
     });
   }
-  out[out.length - 1] = { ...out[out.length - 1], price: base };
+  const last = out[out.length - 1];
+  if (last) out[out.length - 1] = { date: last.date, price: base };
   return out;
 }
 
